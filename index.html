@@ -52,16 +52,24 @@ body{
 /* --------- Character + walking animation --------- */
 .scene{position:relative;height:260px;margin-top:40px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
 .ground{position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(180deg,#061428,#032033);box-shadow:inset 0 10px 30px rgba(0,0,0,0.6)}
-.character{position:absolute;left:40px;bottom:80px;width:92px;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transform-origin:left bottom}
-.char-head{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,#ffe1c6,#ffd0b3);box-shadow:0 6px 14px rgba(0,0,0,0.25)}
-.char-body{width:84px;height:64px;border-radius:12px;background:linear-gradient(180deg,#404bff,#6f79ff);margin-top:8px;position:relative}
-.char-legs{position:absolute;bottom:-8px;left:12px;display:flex;gap:8px}
-.leg{width:18px;height:36px;background:#ffdecc;border-radius:10px}
-/* walking animation: shift character right and animate legs */
-.walk{animation:walk-right linear forwards}
-.walk .leg{animation:leg-step .4s infinite ease-in-out}
+/* improved walking man using layered divs */
+.character{position:absolute;left:40px;bottom:80px;width:92px;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transform-origin:left bottom}
+.char-head{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,#ffe1c6,#ffd0b3);box-shadow:0 6px 14px rgba(0,0,0,0.25);position:relative;z-index:3}
+.char-body{width:84px;height:70px;border-radius:16px;background:linear-gradient(180deg,#404bff,#6f79ff);margin-top:8px;position:relative;z-index:2}
+.arm{position:absolute;width:12px;height:44px;background:#ffdcbf;border-radius:10px;top:10px;transform-origin:top center}
+.arm.left{left:-8px;transform:rotate(20deg)}
+.arm.right{right:-8px;transform:rotate(-20deg)}
+.leg{position:absolute;bottom:-8px;width:18px;height:46px;background:#ffdecc;border-radius:10px;left:22px}
+.leg.right{left:48px}
+.char-shadow{position:absolute;left:6px;right:6px;bottom:-22px;height:18px;border-radius:50%;background:rgba(0,0,0,0.3);filter:blur(6px);z-index:0}
+/* walking animation: swing arms and legs, bob body and translate across scene */
+.walk .arm.left{animation:arm-swing 0.6s ease-in-out infinite}
+.walk .arm.right{animation:arm-swing 0.6s ease-in-out infinite reverse}
+.walk .leg{animation:leg-step 0.6s ease-in-out infinite}
+.walk{animation:walk-right 8s linear forwards}
+@keyframes arm-swing{0%{transform:rotate(20deg)}50%{transform:rotate(-20deg)}100%{transform:rotate(20deg)}}
 @keyframes leg-step{0%{transform:translateY(0)}50%{transform:translateY(8px)}100%{transform:translateY(0)}}
-@keyframes walk-right{0%{left:40px}100%{left:calc(100% - 140px)}}
+@keyframes walk-right{0%{left:40px;transform:translateY(0)}100%{left:calc(100% - 140px);transform:translateY(-4px)}}
 
 /* --------- Right: Controls / Wallet / Withdraw --------- */
 .side{width:360px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));backdrop-filter:blur(6px)}
@@ -87,29 +95,32 @@ footer{margin-top:14px;font-size:12px;color:#9fb0d6;text-align:center}
             <div style="font-weight:800;font-size:20px">Walk For</div>
             <div class="muted">— Walk, earn coins, withdraw by bank</div>
           </div>
-          <div class="muted">Daily cap: 1000 coins</div>
-        </div><!-- decorative animated flower -->
-    <div class="flower-wrap">
-      <div class="flower">
-        <div class="petal p1" style="--rot:0deg"></div>
-        <div class="petal p2" style="--rot:60deg"></div>
-        <div class="petal p3" style="--rot:120deg"></div>
-        <div class="petal p4" style="--rot:180deg"></div>
-        <div class="petal p5" style="--rot:240deg"></div>
-        <div class="petal p6" style="--rot:300deg"></div>
-        <div class="center-dot"></div>
-      </div>
-    </div>
-
-    <div class="scene" id="scene">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="muted">Daily cap: 1000 coins</div>
+            <div title="$1 badge" style="background:linear-gradient(90deg,#ffd700,#ff8c00);padding:8px 10px;border-radius:8px;font-weight:800;color:#021018">$1</div>
+          </div>
+        </div>
+        <!-- decorative animated flower -->
+        <div class="flower-wrap">
+          <div class="flower">
+            <div class="petal p1" style="--rot:0deg"></div>
+            <div class="petal p2" style="--rot:60deg"></div>
+            <div class="petal p3" style="--rot:120deg"></div>
+            <div class="petal p4" style="--rot:180deg"></div>
+            <div class="petal p5" style="--rot:240deg"></div>
+            <div class="petal p6" style="--rot:300deg"></div>
+            <div class="center-dot"></div>
+          </div>
+        </div><div class="scene" id="scene">
       <div class="sky"></div>
       <div class="character center" id="character">
         <div class="char-head"></div>
         <div class="char-body">
-          <div class="char-legs">
-            <div class="leg"></div>
-            <div class="leg"></div>
-          </div>
+          <div class="arm left"></div>
+          <div class="arm right"></div>
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+          <div class="char-shadow"></div>
         </div>
       </div>
       <div class="ground"></div>
@@ -253,6 +264,7 @@ footer{margin-top:14px;font-size:12px;color:#9fb0d6;text-align:center}
 
     function startWalkingSequence(){
       if(state.isWalking) return;
+      if(state.dailyEarned >= COINS_PER_DAY_CAP){ alert('Daily cap reached for today. Come back tomorrow.'); return; }
       state.isWalking = true; saveState();
       startBtn.style.display='none'; stopBtn.style.display='inline-block';
       statusEl.innerText = 'Starting 125s countdown';
@@ -296,7 +308,11 @@ footer{margin-top:14px;font-size:12px;color:#9fb0d6;text-align:center}
         resetIfNewDay();
         if(isAutoOffNow()){ statusEl.innerText='Auto-off at 23:59'; stopWalkingSequence(); return; }
         // if daily cap reached stop earning
-        if(state.dailyEarned >= COINS_PER_DAY_CAP) { statusEl.innerText='Daily cap reached'; stopEarning(); return; }
+        if(state.dailyEarned >= COINS_PER_DAY_CAP) { statusEl.innerText = 'Daily cap reached — 1000 coins = ₹' + (COINS_PER_DAY_CAP * COIN_TO_RUPEE);
+          saveState();
+          // stop the full walking sequence (UI + earning)
+          stopWalkingSequence();
+          return; }
         // increment by coinsPerSecond
         state.coins += coinsPerSecond;
         state.dailyEarned += coinsPerSecond;
@@ -376,8 +392,4 @@ footer{margin-top:14px;font-size:12px;color:#9fb0d6;text-align:center}
     });
 
     // show local withdraw requests count in console (admin stub)
-    console.log('Withdraw requests (local demo):', JSON.parse(localStorage.getItem('withdraw_requests')||'[]'));
-
-    // quick guide: open DevTools -> Application -> Local Storage to see saved data for demo.
-  </script></body>
-</html>
+    console.log(
