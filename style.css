@@ -1,0 +1,118 @@
+/* Hacker Style Theme with Glitch Effects */
+body {
+    background-color: #0a0a0a;
+    color: #0f0; /* Matrix Green */
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    text-align: center;
+}
+
+/* Stylish Glitch Text Effect for Title */
+.glitch {
+    font-size: 4rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: relative;
+    text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+        0.025em 0.04em 0 #fffc00;
+    animation: glitch 725ms infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes glitch {
+    0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
+    15% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
+    16% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+    49% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+    50% { text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff, 0 -0.04em 0 #fffc00; }
+    99% { text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff, 0 -0.04em 0 #fffc00; }
+    100% { text-shadow: -0.05em 0 0 #00fffc, -0.025em -0.04em 0 #fc00ff, -0.04em -0.025em 0 #fffc00; }
+}
+
+/* Container Styling */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid #0f0;
+    padding: 20px;
+    box-shadow: 0 0 15px #0f0;
+    background-color: #000;
+}
+
+/* Game Area and Character */
+#game-area {
+    height: 150px;
+    position: relative;
+    margin: 20px 0;
+    overflow: hidden;
+    border: 1px solid #0f0;
+}
+
+#character {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 40px;
+    animation: none; /* Controlled by JS */
+}
+
+/* Walking Animation */
+@keyframes walk {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(100vw - 100px)); }
+}
+
+/* Button Styling */
+button {
+    background-color: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 10px 20px;
+    margin: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+button:hover {
+    background-color: #0f0;
+    color: #000;
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* Stats and Withdrawal Panel */
+#stats {
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+#withdraw-section {
+    margin-top: 30px;
+    border-top: 1px solid #0f0;
+    padding-top: 20px;
+    display: none; /* Hidden by default */
+}
+
+input, select {
+    background-color: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 8px;
+    margin: 5px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Terminal-like output */
+#output {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #0f0;
+    height: 100px;
+    overflow-y: auto;
+    text-align: left;
+    font-size: 14px;
+}
