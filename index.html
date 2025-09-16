@@ -1,306 +1,55 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="hi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Walk For — Single File</title>
-  <style>
-    /* Inline styles: neon + hacker blend, character walk animation */
-    :root{--bg1:#071029;--fg:#e6f0ff;--accent:#00ff66}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;font-family:Inter,Arial,Helvetica,sans-serif;background:radial-gradient(600px 400px at 10% 20%, rgba(28,90,255,0.12), transparent), radial-gradient(400px 300px at 90% 80%, rgba(255,85,163,0.06), transparent), linear-gradient(180deg,#041022 0%,#071029 50%,#021018 100%); color:var(--fg); -webkit-font-smoothing:antialiased;}
-    .app{max-width:1000px;margin:18px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 10px 40px rgba(3,6,20,0.7);border:1px solid rgba(255,255,255,0.03)}
-    .top{display:flex;gap:16px;align-items:flex-start}
-    .game-area{flex:1;padding:12px;position:relative;min-height:520px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.002));overflow:hidden}
-    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .title{font-weight:800;font-size:20px}
-    .muted{color:#9fb0d6;font-size:13px}
-    .badge{background:linear-gradient(90deg,#ffd700,#ff8c00);padding:6px 10px;border-radius:8px;font-weight:800;color:#021018}
-    /* scene */
-    .scene{position:relative;height:320px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02);overflow:hidden}
-    .ground{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(180deg,#061428,#032033);box-shadow:inset 0 10px 30px rgba(0,0,0,0.6)}
-    /* character style (SVG-like block) */
-    .character{position:absolute;left:30px;bottom:90px;width:110px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transform-origin:left bottom;z-index:3}
-    .char-head{width:64px;height:64px;border-radius:50%;background:linear-gradient(180deg,#ffe1c6,#ffd0b3);box-shadow:0 8px 16px rgba(0,0,0,0.25)}
-    .char-body{width:92px;height:80px;border-radius:14px;background:linear-gradient(180deg,#404bff,#6f79ff);margin-top:10px;position:relative}
-    .arm{position:absolute;width:14px;height:56px;background:#ffdcbf;border-radius:12px;top:10px}
-    .arm.left{left:-10px;transform:rotate(12deg)}
-    .arm.right{right:-10px;transform:rotate(-12deg)}
-    .leg{position:absolute;bottom:-10px;width:20px;height:56px;background:#ffdecc;border-radius:12px;left:22px}
-    .leg.right{left:58px}
-    .char-shadow{position:absolute;left:8px;right:8px;bottom:-30px;height:18px;border-radius:50%;background:rgba(0,0,0,0.28);filter:blur(6px);}
-    /* walking animations */
-    .walk .arm.left{animation:arm-swing 0.6s ease-in-out infinite}
-    .walk .arm.right{animation:arm-swing 0.6s ease-in-out infinite reverse}
-    .walk .leg{animation:leg-step 0.6s ease-in-out infinite}
-    /* translate movement across scene when walking */
-    .walk{animation:walk-across 14s linear forwards}
-    @keyframes arm-swing{0%{transform:rotate(12deg)}50%{transform:rotate(-18deg)}100%{transform:rotate(12deg)}}
-    @keyframes leg-step{0%{transform:translateY(0)}50%{transform:translateY(10px)}100%{transform:translateY(0)}}
-    @keyframes walk-across{0%{left:30px}100%{left:calc(100% - 160px)}}
-    /* controls & right panel */
-    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
-    .btn{padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#2b7fff,#a65bff);color:white;font-weight:700;border:0;cursor:pointer}
-    .btn.secondary{background:linear-gradient(90deg,#2bffcc,#2bdbff);color:#021018}
-    .wallet{display:flex;gap:12px;margin-top:12px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
-    .big{font-size:20px;font-weight:800}
-    .side{width:340px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));backdrop-filter:blur(6px)}
-    .form input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:8px}
-    footer{margin-top:12px;font-size:12px;color:#9fb0d6;text-align:center}
-    /* activity log */
-    .activity{margin-top:10px;max-height:140px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
-    .activity ul{list-style:none;padding:0;margin:0;color:#cfe6ff;font-size:13px}
-    /* responsive */
-    @media(max-width:980px){.top{flex-direction:column}.side{width:100%}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WALK LOCK</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app">
-    <div class="top">
-      <div class="game-area">
-        <div class="header">
-          <div>
-            <div class="title">Walk For</div>
-            <div class="muted">— Walk, earn coins, withdraw by bank</div>
-          </div>
-          <div style="text-align:right">
-            <div class="muted">Daily cap: 1000 coins</div>
-            <div class="badge">₹1</div>
-          </div>
+    <div class="container">
+        <!-- Game Title with Glitch Effect -->
+        <h1 class="glitch">WALK LOCK</h1>
+        
+        <!-- Game Instructions -->
+        <p>START BUTTON dabayein, ladka chalne lagega. STOP dabayein, ruk jayega.</p>
+        
+        <!-- Game Area Where Character Walks -->
+        <div id="game-area">
+            <div id="character">🚶</div>
         </div>
-
-        <div class="scene" id="scene">
-          <div class="character" id="character" role="img" aria-label="walking character">
-            <div class="char-head"></div>
-            <div class="char-body">
-              <div class="arm left"></div>
-              <div class="arm right"></div>
-              <div class="leg left"></div>
-              <div class="leg right"></div>
-              <div class="char-shadow"></div>
-            </div>
-          </div>
-          <div class="ground"></div>
+        
+        <!-- Control Buttons -->
+        <div>
+            <button id="start-btn">START</button>
+            <button id="stop-btn">STOP</button>
         </div>
-
-        <div class="controls">
-          <button class="btn" id="startBtn">Start</button>
-          <button class="btn secondary" id="stopBtn" style="display:none">Stop</button>
-          <div class="muted" id="status">Idle</div>
-          <div style="margin-left:auto" class="muted">Next ad in <span id="adTimer">-</span></div>
+        
+        <!-- Stats Display -->
+        <div id="stats">
+            <p>COINS: <span id="coins">0</span> / 1000</p>
+            <p>USDT: <span id="usdt">0.00</span></p>
+            <p>STATUS: <span id="status">READY</span></p>
         </div>
-
-        <div class="wallet">
-          <div class="card" style="flex:1">
-            <div class="muted">Wallet</div>
-            <div class="big" id="coinsDisplay">0 coins</div>
-            <div class="muted">Equivalent: ₹<span id="rupeeDisplay">0</span></div>
-          </div>
-          <div class="card" style="width:200px;text-align:center">
-            <div class="muted">Daily Earned</div>
-            <div class="big" id="dailyEarned">0</div>
-            <div class="muted">/ 1000</div>
-          </div>
+        
+        <!-- Withdrawal Section (Hidden Initially) -->
+        <div id="withdraw-section">
+            <h3>WITHDRAW EARNINGS</h3>
+            <p>20 USDT = 1000 COINS</p>
+            <select id="network">
+                <option value="BEP20">BEP20</option>
+                <option value="TRC20">TRC20</option>
+            </select>
+            <input type="text" id="address" placeholder="Your Wallet Address">
+            <button id="withdraw-btn">WITHDRAW</button>
         </div>
-      </div>
-
-      <aside class="side" id="side">
-        <div class="card">
-          <div class="muted">Account</div>
-          <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
-            <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#2b7fff,#a65bff);display:grid;place-items:center;font-weight:800">W</div>
-            <div>
-              <div class="big" id="userName">User 6932175</div>
-              <div class="muted" id="userId">ID: 6932175</div>
-            </div>
-          </div>
+        
+        <!-- Terminal Output -->
+        <div id="output">
+            > System initialized. Press START to begin.<br>
         </div>
-
-        <div class="card">
-          <div class="muted">Withdrawal (Bank Transfer Only)</div>
-          <div class="form">
-            <label>Account Holder Name</label><input id="accName" placeholder="Full name" />
-            <label>Bank Name</label><input id="bankName" placeholder="e.g. State Bank of India" />
-            <label>Account Number</label><input id="accNumber" placeholder="123456789012" />
-            <label>IFSC Code</label><input id="ifsc" placeholder="e.g. SBIN0000001" />
-            <label>Withdraw Amount (₹) — Min ₹200</label><input id="withdrawAmount" placeholder="200" type="number" />
-            <div style="margin-top:8px"><button class="btn" id="withdrawBtn">Request Withdraw</button></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="muted">How it works</div>
-          <ol style="margin-left:14px;margin-top:8px">
-            <li class="muted">Earn coins while character is walking.</li>
-            <li class="muted">1000 coins = ₹100 (1 coin = ₹0.1)</li>
-            <li class="muted">Min withdraw ₹200 = 2000 coins.</li>
-            <li class="muted">Daily cap: 1000 coins (automatically enforced).</li>
-          </ol>
-        </div>
-
-        <div class="card activity">
-          <div class="muted">Activity Log</div>
-          <ul id="activityList"></ul>
-        </div>
-
-        <footer>Made for GitHub demo — open this file in browser to run.</footer>
-      </aside>
     </div>
-  </div>
 
-  <script>
-    // Single-file JS: make start/stop move character and accrue coins.
-    const COINS_PER_DAY_CAP = 1000;
-    const COIN_TO_RUPEE = 0.1;
-    const MIN_WITHDRAW_RUPEE = 200;
-    const AD_INTERVAL_MS = 15 * 60 * 1000;
-
-    const LS_KEY = 'walkfor_demo_v1_single';
-    let state = {
-      user:{id:'6932175',name:'User 6932175'},
-      coins:0.0,
-      dailyEarned:0.0,
-      lastEarnDay:(new Date()).toISOString().slice(0,10),
-      isWalking:false,
-      nextAdAt: Date.now() + AD_INTERVAL_MS
-    };
-
-    // load saved state but keep fixed user id
-    try{
-      const raw = localStorage.getItem(LS_KEY);
-      if(raw){
-        const saved = JSON.parse(raw);
-        state.coins = saved.coins || 0;
-        state.dailyEarned = saved.dailyEarned || 0;
-        state.lastEarnDay = saved.lastEarnDay || state.lastEarnDay;
-        state.nextAdAt = saved.nextAdAt || state.nextAdAt;
-      }
-      state.user.id = '6932175'; state.user.name='User 6932175';
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
-    }catch(e){ console.warn(e); localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-
-    const coinsDisplay = document.getElementById('coinsDisplay');
-    const rupeeDisplay = document.getElementById('rupeeDisplay');
-    const dailyEarnedEl = document.getElementById('dailyEarned');
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const statusEl = document.getElementById('status');
-    const characterEl = document.getElementById('character');
-    const adTimerEl = document.getElementById('adTimer');
-
-    function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-    function logActivity(text){
-      const ul = document.getElementById('activityList');
-      if(!ul) return;
-      const li = document.createElement('li');
-      li.innerText = new Date().toLocaleTimeString() + ' — ' + text;
-      ul.insertBefore(li, ul.firstChild);
-      while(ul.children.length>50) ul.removeChild(ul.lastChild);
-    }
-
-    function resetIfNewDay(){
-      const today = (new Date()).toISOString().slice(0,10);
-      if(state.lastEarnDay !== today){
-        state.dailyEarned = 0; state.lastEarnDay = today; saveState();
-        logActivity('New day — daily cap reset');
-      }
-    }
-
-    function updateUI(){
-      coinsDisplay.innerText = Math.floor(state.coins) + ' coins';
-      rupeeDisplay.innerText = Math.floor(state.coins * COIN_TO_RUPEE);
-      dailyEarnedEl.innerText = Math.floor(state.dailyEarned);
-      document.getElementById('userName').innerText = state.user.name;
-      document.getElementById('userId').innerText = 'ID: ' + state.user.id;
-    }
-
-    function isAutoOffNow(){
-      const now = new Date();
-      if(now.getHours() > 23) return true;
-      if(now.getHours() === 23 && now.getMinutes() >= 59) return true;
-      return false;
-    }
-
-    // coins per second tuned so 1000 coins ~ 4.6 hours
-    const coinsPerSecond = 0.06;
-
-    let earnInterval=null;
-
-    function startWalking(){
-      if(state.isWalking) return;
-      resetIfNewDay();
-      if(state.dailyEarned >= COINS_PER_DAY_CAP){ alert('Daily cap reached for today. Come back tomorrow.'); return; }
-      state.isWalking = true; saveState();
-      startBtn.style.display='none'; stopBtn.style.display='inline-block';
-      statusEl.innerText = 'Walking...';
-      // add walk class to animate character
-      characterEl.classList.add('walk');
-      logActivity('Walking started');
-      earnInterval = setInterval(()=>{
-        resetIfNewDay();
-        if(isAutoOffNow()){ statusEl.innerText='Auto-off at 23:59'; stopWalking(); return; }
-        if(state.dailyEarned >= COINS_PER_DAY_CAP){
-          state.dailyEarned = COINS_PER_DAY_CAP;
-          statusEl.innerText = 'Daily cap reached — 1000 coins = ₹' + (COINS_PER_DAY_CAP * COIN_TO_RUPEE);
-          saveState(); stopWalking(); logActivity('Daily cap reached'); return;
-        }
-        state.coins += coinsPerSecond;
-        state.dailyEarned += coinsPerSecond;
-        if(state.dailyEarned > COINS_PER_DAY_CAP){
-          const overflow = state.dailyEarned - COINS_PER_DAY_CAP; state.coins -= overflow; state.dailyEarned = COINS_PER_DAY_CAP;
-          if(state.coins > COINS_PER_DAY_CAP) state.coins = COINS_PER_DAY_CAP;
-        }
-        saveState(); updateUI();
-        if(Date.now() >= state.nextAdAt){ showAdPlaceholder(); state.nextAdAt = Date.now() + AD_INTERVAL_MS; saveState(); }
-      },1000);
-    }
-
-    function stopWalking(){
-      if(earnInterval) clearInterval(earnInterval);
-      earnInterval = null;
-      state.isWalking = false; saveState();
-      characterEl.classList.remove('walk');
-      startBtn.style.display='inline-block'; stopBtn.style.display='none';
-      statusEl.innerText = 'Stopped'; logActivity('Walking stopped');
-    }
-
-    function showAdPlaceholder(){
-      adTimerEl.innerText = 'showing ad...'; logActivity('Ad shown'); setTimeout(()=>{ adTimerEl.innerText = 'next in 15:00'; },4000);
-    }
-
-    document.getElementById('startBtn').addEventListener('click', startWalking);
-    document.getElementById('stopBtn').addEventListener('click', stopWalking);
-
-    document.getElementById('withdrawBtn').addEventListener('click',()=>{
-      const accName = document.getElementById('accName').value.trim();
-      const bankName = document.getElementById('bankName').value.trim();
-      const accNumber = document.getElementById('accNumber').value.trim();
-      const ifsc = document.getElementById('ifsc').value.trim();
-      const rupeeAmt = Number(document.getElementById('withdrawAmount').value);
-      if(!accName || !bankName || !accNumber || !ifsc || !rupeeAmt){ alert('Please fill all fields.'); return; }
-      if(rupeeAmt < MIN_WITHDRAW_RUPEE){ alert('Minimum withdraw is ₹' + MIN_WITHDRAW_RUPEE); return; }
-      const requiredCoins = Math.ceil(rupeeAmt / COIN_TO_RUPEE);
-      if(state.coins < requiredCoins){ alert('Not enough coins. You need ' + requiredCoins + ' coins for this withdrawal.'); return; }
-
-      const req = {id:'wr_'+Date.now(),user:state.user.id,accName,bankName,accNumber,ifsc,rupeeAmt,coins:requiredCoins,status:'Pending',createdAt:new Date().toISOString()};
-      let list = [];
-      try{ list = JSON.parse(localStorage.getItem('withdraw_requests')||'[]'); }catch(e){ list = []; }
-      list.push(req); localStorage.setItem('withdraw_requests', JSON.stringify(list));
-
-      state.coins -= requiredCoins; if(state.coins<0) state.coins=0;
-      saveState(); updateUI();
-      logActivity('Withdraw requested ₹'+rupeeAmt+' ('+requiredCoins+' coins)');
-      alert('Withdrawal request created and saved (Pending). Admin must approve and transfer manually.');
-    });
-
-    resetIfNewDay(); updateUI();
-
-    // auto stop check
-    setInterval(()=>{ if(isAutoOffNow() && state.isWalking){ statusEl.innerText='Auto-off at 23:59 — Stopping'; stopWalking(); } },30000);
-
-    // ad timer tick
-    setInterval(()=>{ const remaining = Math.max(0, state.nextAdAt - Date.now()); const mm = String(Math.floor(remaining/60000)).padStart(2,'0'); const ss = String(Math.floor((remaining%60000)/1000)).padStart(2,'0'); const adTimerEl = document.getElementById('adTimer'); if(adTimerEl) adTimerEl.innerText = mm + ':' + ss; },1000);
-  </script>
+    <script src="script.js"></script>
 </body>
-                                                                                       </html>
+          </html>
